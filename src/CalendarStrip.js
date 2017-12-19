@@ -526,6 +526,7 @@ export default class CalendarStrip extends Component {
           showDayName={this.props.showDayName}
           showDayNumber={this.props.showDayNumber}
           onDateSelected={() => enabled && this.onDateSelected(datesForWeek[i])}
+          onLongPress={date => enabled && this.props.onDateLongPress(date)}
           calendarColor={this.props.calendarColor}
           dateNameStyle={this.props.dateNameStyle}
           dateNumberStyle={this.props.dateNumberStyle}

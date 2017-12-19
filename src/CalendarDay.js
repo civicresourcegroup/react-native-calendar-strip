@@ -201,6 +201,7 @@ export default class CalendarDay extends Component {
     return (
       <TouchableOpacity
         onPress={this.props.onDateSelected.bind(this, this.props.date)}
+        onLongPress={() => this.props.onLongPress(this.props.date)}
       >
         <View
           key={this.props.date}

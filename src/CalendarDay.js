@@ -5,7 +5,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 
-import { Text, View, LayoutAnimation, TouchableOpacity } from "react-native";
+import { Animated, Text, View, LayoutAnimation, TouchableOpacity } from "react-native";
 import styles from "./Calendar.style.js";
 
 export default class CalendarDay extends Component {
@@ -203,7 +203,7 @@ export default class CalendarDay extends Component {
         onPress={this.props.onDateSelected.bind(this, this.props.date)}
         onLongPress={() => this.props.onLongPress(this.props.date)}
       >
-        <View
+        <Animated.View
           key={this.props.date}
           style={[
             styles.dateContainer,
@@ -226,7 +226,7 @@ export default class CalendarDay extends Component {
             >
               {this.props.date.date()}
             </Text>}
-        </View>
+        </Animated.View>
       </TouchableOpacity>
     );
   }

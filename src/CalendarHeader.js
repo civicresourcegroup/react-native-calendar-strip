@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { Text } from "react-native";
+import { Text, TouchableOpacity } from "react-native";
 
 import styles from "./Calendar.style.js";
 
@@ -64,15 +64,17 @@ class CalendarHeader extends Component {
       this.props.calendarHeaderFormat
     );
     return (
-      <Text
-        style={[
-          styles.calendarHeader,
-          { fontSize: this.props.fontSize },
-          this.props.calendarHeaderStyle
-        ]}
-      >
-        {headerText}
-      </Text>
+      <TouchableOpacity onPress={this.props.onPress} onLongPress={this.props.onLongPress}>
+        <Text
+          style={[
+            styles.calendarHeader,
+            { fontSize: this.props.fontSize },
+            this.props.calendarHeaderStyle
+          ]}
+        >
+          {headerText}
+        </Text>
+      </TouchableOpacity>
     );
   }
 }

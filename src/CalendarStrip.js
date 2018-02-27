@@ -570,6 +570,8 @@ export default class CalendarStrip extends Component {
         calendarHeaderStyle={this.props.calendarHeaderStyle}
         datesForWeek={this.state.datesForWeek}
         fontSize={this.state.monthFontSize}
+        onPress={this.props.onCalendarHeaderPress}
+        onLongPress={this.props.onCalendarHeaderLongPress}
       />
     );
 

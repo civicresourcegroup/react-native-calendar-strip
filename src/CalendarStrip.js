@@ -185,7 +185,7 @@ export default class CalendarStrip extends Component {
       updateState = true;
       // No need to update week start here
       startingDate = {
-        startingDate: this.updateWeekStart(nextProps.startingDate)
+        startingDate: this.updateWeekStart(this.getInitialStartingDate())
       };
       weekData = this.updateWeekData(
         startingDate.startingDate,

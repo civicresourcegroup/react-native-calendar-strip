@@ -98,7 +98,7 @@ export default class CalendarStrip extends Component {
 
     if (props.locale) {
       if (props.locale.name && props.locale.config) {
-        moment.locale(props.locale.name, props.locale.config);
+        moment.updateLocale(props.locale.name, props.locale.config);
       } else {
         throw new Error(
           "Locale prop is not in the correct format. \b Locale has to be in form of object, with params NAME and CONFIG!"
@@ -140,7 +140,9 @@ export default class CalendarStrip extends Component {
 
   //Receiving props and set date states, minimizing state updates.
   componentWillReceiveProps(nextProps) {
-    let selectedDate = {}, startingDate = {}, weekData = {};
+    let selectedDate = {},
+      startingDate = {},
+      weekData = {};
     let updateState = false;
 
     if (!this.compareDates(nextProps.selectedDate, this.props.selectedDate)) {
@@ -163,8 +165,7 @@ export default class CalendarStrip extends Component {
       !this.compareDates(nextProps.startingDate, this.props.startingDate)
     ) {
       updateState = true;
-      startingDate = this.setLocale(moment(nextProps.startingDate));
-      startingDate = { startingDate: this.updateWeekStart(startingDate) };
+      startingDate = { startingDate: this.setLocale(moment(nextProps.startingDate))};
       weekData = this.updateWeekData(
         startingDate.startingDate,
         this.state.selectedDate,
@@ -217,10 +218,12 @@ export default class CalendarStrip extends Component {
     delete _props.leftSelector;
     delete _props.rightSelector;
 
-    return JSON.stringify(this.state) !== JSON.stringify(nextState) ||
-          JSON.stringify(_props) !== JSON.stringify(_nextProps) ||
-          this.props.leftSelector !== nextProps.leftSelector ||
-          this.props.rightSelector !== nextProps.rightSelector;
+    return (
+      JSON.stringify(this.state) !== JSON.stringify(nextState) ||
+      JSON.stringify(_props) !== JSON.stringify(_nextProps) ||
+      this.props.leftSelector !== nextProps.leftSelector ||
+      this.props.rightSelector !== nextProps.rightSelector
+    );
   }
 
   // Check whether two datetimes are of the same value.  Supports Moment date,
@@ -301,9 +304,10 @@ export default class CalendarStrip extends Component {
     }
     let addOrSubtract = daysDiff > 0 ? "add" : "subtract";
     let adjustWeeks = daysDiff / 7;
-    adjustWeeks = adjustWeeks > 0
-      ? Math.floor(adjustWeeks)
-      : Math.ceil(Math.abs(adjustWeeks));
+    adjustWeeks =
+      adjustWeeks > 0
+        ? Math.floor(adjustWeeks)
+        : Math.ceil(Math.abs(adjustWeeks));
     startingDate = originalStartDate[addOrSubtract](adjustWeeks, "w");
 
     return this.setLocale(startingDate);
@@ -490,7 +494,8 @@ export default class CalendarStrip extends Component {
       numElements++;
     }
 
-    let dayComponentWidth = (csWidth / numElements) + this.props.responsiveSizingOffset;
+    let dayComponentWidth =
+      csWidth / numElements + this.props.responsiveSizingOffset;
     dayComponentWidth = Math.min(
       dayComponentWidth,
       this.props.maxDayComponentSize
@@ -544,26 +549,29 @@ export default class CalendarStrip extends Component {
         />
       );
       datesRender.push(
-        this.props.calendarAnimation
-          ? <Animated.View
-              key={i}
-              style={{ opacity: this.animatedValue[i], flex: 1 }}
-            >
-              {calendarDay}
-            </Animated.View>
-          : <View key={i} style={{ flex: 1 }}>
-              {calendarDay}
-            </View>
+        this.props.calendarAnimation ? (
+          <Animated.View
+            key={i}
+            style={{ opacity: this.animatedValue[i], flex: 1 }}
+          >
+            {calendarDay}
+          </Animated.View>
+        ) : (
+          <View key={i} style={{ flex: 1 }}>
+            {calendarDay}
+          </View>
+        )
       );
     }
 
-    let calendarHeader = this.props.showMonth &&
+    let calendarHeader = this.props.showMonth && (
       <CalendarHeader
         calendarHeaderFormat={this.props.calendarHeaderFormat}
         calendarHeaderStyle={this.props.calendarHeaderStyle}
         datesForWeek={this.state.datesForWeek}
         fontSize={this.state.monthFontSize}
-      />;
+      />
+    );
 
     // calendarHeader renders above the dates & left/right selectors if dates are shown.
     // However if dates are hidden, the header shows between the left/right selectors.
@@ -596,11 +604,11 @@ export default class CalendarStrip extends Component {
               size={this.state.selectorSize}
             />
 
-            {this.props.showDate
-              ? <View style={styles.calendarDates}>
-                  {datesRender}
-                </View>
-              : calendarHeader}
+            {this.props.showDate ? (
+              <View style={styles.calendarDates}>{datesRender}</View>
+            ) : (
+              calendarHeader
+            )}
 
             <WeekSelector
               controlDate={this.props.maxDate}

@@ -55,5 +55,9 @@ export default StyleSheet.create({
     color: "#A7A7A7",
     fontWeight: "bold",
     textAlign: "center"
-  }
+  },
+  calendarHeaderContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
 });

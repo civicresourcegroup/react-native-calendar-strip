@@ -568,6 +568,7 @@ export default class CalendarStrip extends Component {
       <CalendarHeader
         calendarHeaderFormat={this.props.calendarHeaderFormat}
         calendarHeaderStyle={this.props.calendarHeaderStyle}
+        calendarHeaderContainerStyle={this.props.calendarHeaderContainerStyle}
         datesForWeek={this.state.datesForWeek}
         fontSize={this.state.monthFontSize}
         onPress={this.props.onCalendarHeaderPress}
@@ -589,7 +590,9 @@ export default class CalendarStrip extends Component {
           style={[this.props.innerStyle, { height: this.state.height }]}
           onLayout={this.onLayout.bind(this)}
         >
-          {this.props.showDate && calendarHeader}
+          <View style={styles.calendarHeaderContainer}>
+            {this.props.showDate && calendarHeader}
+          </View>
           <View style={styles.datesStrip}>
             <WeekSelector
               controlDate={this.props.minDate}

@@ -64,7 +64,7 @@ class CalendarHeader extends Component {
       this.props.calendarHeaderFormat
     );
     return (
-      <TouchableOpacity onPress={this.props.onPress} onLongPress={this.props.onLongPress}>
+      <TouchableOpacity onPress={this.props.onPress} onLongPress={this.props.onLongPress} style={this.props.calendarHeaderContainerStyle}>
         <Text
           style={[
             styles.calendarHeader,

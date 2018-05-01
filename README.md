@@ -219,6 +219,7 @@ Methods may be accessed through the instantiated component's [ref](https://react
 | **`disabledDateNumberStyle`**  | Style for disabled number of the day in dates strip (controlled by datesWhitelist & datesBlacklist).                                                                                                                                                                                     | Any    |
 | **`disabledDateOpacity`**      | Opacity of disabled dates strip.                                                                                                                                                                                                                                                         | Number | **`0.3`**  |
 | **`customDatesStyles`**        | Custom per-date styling, overriding the styles above. Check Table <a href="#customdatesstyles"> Below </a>                                                                                                                                                                               | Array  |
+| **`shouldAllowFontScaling`**   | Override the underlying Text element scaling to respect font settings                                                                                                                                                                            | Bool   | **`True`**|
 
 #### Responsive Sizing
 
@@ -428,6 +429,10 @@ Contributions are welcome!
 5. Submit a pull request :D
 
 Or open up [an issue](https://github.com/BugiDev/react-native-calendar-strip/issues).
+
+## Discussion and Collaboration
+
+In addition to the [Github Issues](https://github.com/BugiDev/react-native-calendar-strip/issues) page, there is a [Discord group](https://discord.gg/RvFM97v) for React Native with a channel specifically for [react-native-calendar-strip](https://discordapp.com/channels/413352084981678082/413360340579909633).  Thanks @MichelDiz for setting that up.
 
 ## License
 

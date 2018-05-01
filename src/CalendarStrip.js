@@ -4,6 +4,7 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import {polyfill} from 'react-lifecycles-compat';
 import { View, Animated, Easing } from "react-native";
 
 import moment from "moment";
@@ -17,7 +18,7 @@ import styles from "./Calendar.style.js";
  * Class CalendarStrip that is representing the whole calendar strip and contains CalendarDay elements
  *
  */
-export default class CalendarStrip extends Component {
+class CalendarStrip extends Component {
   static propTypes = {
     style: PropTypes.any,
     innerStyle: PropTypes.any,
@@ -71,7 +72,8 @@ export default class CalendarStrip extends Component {
     disabledDateOpacity: PropTypes.number,
     styleWeekend: PropTypes.bool,
 
-    locale: PropTypes.object
+    locale: PropTypes.object,
+    shouldAllowFontScaling: PropTypes.bool
   };
 
   static defaultProps = {
@@ -89,7 +91,8 @@ export default class CalendarStrip extends Component {
     responsiveSizingOffset: 0,
     innerStyle: { flex: 1 },
     maxDayComponentSize: 80,
-    minDayComponentSize: 10
+    minDayComponentSize: 10,
+    shouldAllowFontScaling: true
   };
 
   constructor(props) {
@@ -122,8 +125,6 @@ export default class CalendarStrip extends Component {
 
     this.resetAnimation();
 
-    this.componentDidMount = this.componentDidMount.bind(this);
-    this.componentWillUpdate = this.componentWillUpdate.bind(this);
     this.updateWeekData = this.updateWeekData.bind(this);
     this.getPreviousWeek = this.getPreviousWeek.bind(this);
     this.getNextWeek = this.getNextWeek.bind(this);
@@ -139,16 +140,23 @@ export default class CalendarStrip extends Component {
   }
 
   //Receiving props and set date states, minimizing state updates.
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps, prevState) {
+    //Only animate CalendarDays if the selectedDate is the same
+    //Prevents animation on pressing on a date
+    if (prevState.selectedDate === this.state.selectedDate) {
+      this.resetAnimation();
+      this.animate();
+    }
+
     let selectedDate = {},
       startingDate = {},
       weekData = {};
     let updateState = false;
 
-    if (!this.compareDates(nextProps.selectedDate, this.props.selectedDate)) {
+    if (!this.compareDates(prevProps.selectedDate, this.props.selectedDate)) {
       updateState = true;
       selectedDate = {
-        selectedDate: this.setLocale(moment(nextProps.selectedDate))
+        selectedDate: this.setLocale(moment(this.props.selectedDate))
       };
       startingDate = {
         startingDate: this.updateWeekStart(selectedDate.selectedDate)
@@ -156,30 +164,30 @@ export default class CalendarStrip extends Component {
       weekData = this.updateWeekData(
         startingDate.startingDate,
         selectedDate.selectedDate,
-        nextProps
+        this.props
       );
     }
 
     if (
       !updateState &&
-      !this.compareDates(nextProps.startingDate, this.props.startingDate)
+      !this.compareDates(prevProps.startingDate, this.props.startingDate)
     ) {
       updateState = true;
-      startingDate = { startingDate: this.setLocale(moment(nextProps.startingDate))};
+      startingDate = { startingDate: this.setLocale(moment(this.props.startingDate))};
       weekData = this.updateWeekData(
         startingDate.startingDate,
         this.state.selectedDate,
-        nextProps
+        this.props
       );
     }
 
     if (
       !updateState &&
-      (JSON.stringify(nextProps.datesBlacklist) !==
+      (JSON.stringify(prevProps.datesBlacklist) !==
         JSON.stringify(this.props.datesBlacklist) ||
-        JSON.stringify(nextProps.datesWhitelist) !==
+        JSON.stringify(prevProps.datesWhitelist) !==
           JSON.stringify(this.props.datesWhitelist) ||
-        JSON.stringify(nextProps.customDatesStyles) !==
+        JSON.stringify(prevProps.customDatesStyles) !==
           JSON.stringify(this.props.customDatesStyles))
     ) {
       updateState = true;
@@ -190,21 +198,12 @@ export default class CalendarStrip extends Component {
       weekData = this.updateWeekData(
         startingDate.startingDate,
         this.state.selectedDate,
-        nextProps
+        this.props
       );
     }
 
     if (updateState) {
       this.setState({ ...selectedDate, ...startingDate, ...weekData });
-    }
-  }
-
-  //Only animate CalendarDays if the selectedDate is the same
-  //Prevents animation on pressing on a date
-  componentWillUpdate(nextProps, nextState) {
-    if (nextState.selectedDate === this.state.selectedDate) {
-      this.resetAnimation();
-      this.animate();
     }
   }
 
@@ -546,6 +545,7 @@ export default class CalendarStrip extends Component {
           daySelectionAnimation={this.props.daySelectionAnimation}
           customStyle={this.state.datesCustomStylesForWeek[i]}
           size={this.state.dayComponentWidth}
+          allowDayTextScaling={this.props.shouldAllowFontScaling}
         />
       );
       datesRender.push(
@@ -573,6 +573,7 @@ export default class CalendarStrip extends Component {
         fontSize={this.state.monthFontSize}
         onPress={this.props.onCalendarHeaderPress}
         onLongPress={this.props.onCalendarHeaderLongPress}
+        allowHeaderTextScaling={this.props.shouldAllowFontScaling}
       />
     );
 
@@ -635,3 +636,7 @@ export default class CalendarStrip extends Component {
     );
   }
 }
+
+polyfill(CalendarStrip);
+
+export default CalendarStrip;

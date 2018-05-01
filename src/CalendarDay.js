@@ -4,11 +4,12 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import {polyfill} from 'react-lifecycles-compat';
 
 import { Animated, Text, View, LayoutAnimation, TouchableOpacity } from "react-native";
 import styles from "./Calendar.style.js";
 
-export default class CalendarDay extends Component {
+class CalendarDay extends Component {
   static propTypes = {
     date: PropTypes.object.isRequired,
     onDateSelected: PropTypes.func.isRequired,
@@ -32,7 +33,8 @@ export default class CalendarDay extends Component {
     styleWeekend: PropTypes.bool,
     customStyle: PropTypes.object,
 
-    daySelectionAnimation: PropTypes.object
+    daySelectionAnimation: PropTypes.object,
+    allowDayTextScaling: PropTypes.bool
   };
 
   // Reference: https://medium.com/@Jpoliachik/react-native-s-layoutanimation-is-awesome-4a4d317afd3e
@@ -62,11 +64,11 @@ export default class CalendarDay extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps, prevState) {
     newState = {};
     let doStateUpdate = false;
 
-    if (this.state.selected !== nextProps.selected) {
+    if (this.props.selected !== prevProps.selected) {
       if (this.props.daySelectionAnimation.type !== "") {
         let configurableAnimation = {
           duration: this.props.daySelectionAnimation.duration || 300,
@@ -95,12 +97,12 @@ export default class CalendarDay extends Component {
         };
         LayoutAnimation.configureNext(configurableAnimation);
       }
-      newState.selected = nextProps.selected;
+      newState.selected = this.props.selected;
       doStateUpdate = true;
     }
 
-    if (nextProps.size !== this.props.size) {
-      newState = { ...newState, ...this.calcSizes(nextProps) };
+    if (prevProps.size !== this.props.size) {
+      newState = { ...newState, ...this.calcSizes(this.props) };
       doStateUpdate = true;
     }
 
@@ -121,40 +123,32 @@ export default class CalendarDay extends Component {
 
   render() {
     // Defaults for disabled state
-    let dateNameStyle = [styles.dateName, this.props.disabledDateNameStyle];
-    let dateNumberStyle = [
-      styles.dateNumber,
-      this.props.disabledDateNumberStyle
-    ];
+    let dateNameStyle = [styles.dateName, !this.props.enabled && this.props.disabledDateNameStyle];
+    let dateNumberStyle = [styles.dateNumber, !this.props.enabled && this.props.disabledDateNumberStyle];
     let dateViewStyle = this.props.enabled
-      ? []
+      ? [{ backgroundColor: "transparent" }]
       : [{ opacity: this.props.disabledDateOpacity }];
-    let customStyle = this.props.customStyle;
 
+    let customStyle = this.props.customStyle;
     if (customStyle) {
-      dateNameStyle = [styles.dateName, customStyle.dateNameStyle];
-      dateNumberStyle = [styles.dateNumber, customStyle.dateNumberStyle];
+      dateNameStyle.push(customStyle.dateNameStyle);
+      dateNumberStyle.push(customStyle.dateNumberStyle);
       dateViewStyle.push(customStyle.dateContainerStyle);
-    } else if (this.props.enabled) {
+    }
+    if (this.props.enabled && this.state.selected) {
       // Enabled state
       //The user can disable animation, so that is why I use selection type
       //If it is background, the user have to input colors for animation
       //If it is border, the user has to input color for border animation
       switch (this.props.daySelectionAnimation.type) {
         case "background":
-          let dateViewBGColor = this.state.selected
-            ? this.props.daySelectionAnimation.highlightColor
-            : "transparent";
-          dateViewStyle = { backgroundColor: dateViewBGColor };
+          dateViewStyle.push({ backgroundColor: this.props.daySelectionAnimation.highlightColor });
           break;
         case "border":
-          let dateViewBorderWidth = this.state.selected
-            ? this.props.daySelectionAnimation.borderWidth
-            : 0;
-          dateViewStyle = {
+          dateViewStyle.push({
             borderColor: this.props.daySelectionAnimation.borderHighlightColor,
-            borderWidth: dateViewBorderWidth
-          };
+            borderWidth: this.props.daySelectionAnimation.borderWidth
+          });
           break;
         default:
           // No animation styling by default
@@ -209,6 +203,7 @@ export default class CalendarDay extends Component {
           {this.props.showDayName && (
             <Text
               style={[dateNameStyle, { fontSize: this.state.dateNameFontSize }]}
+              allowFontScaling={this.props.allowDayTextScaling}
             >
               {this.props.date.format("ddd").toUpperCase()}
             </Text>
@@ -219,6 +214,7 @@ export default class CalendarDay extends Component {
                 dateNumberStyle,
                 { fontSize: this.state.dateNumberFontSize }
               ]}
+              allowFontScaling={this.props.allowDayTextScaling}
             >
               {this.props.date.date()}
           </Text>)}
@@ -227,3 +223,7 @@ export default class CalendarDay extends Component {
     );
   }
 }
+
+polyfill(CalendarDay);
+
+export default CalendarDay;

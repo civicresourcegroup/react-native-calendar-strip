@@ -11,7 +11,8 @@ class CalendarHeader extends Component {
       PropTypes.object,
       PropTypes.number
     ]),
-    datesForWeek: PropTypes.array.isRequired
+    datesForWeek: PropTypes.array.isRequired,
+    allowHeaderTextScaling: PropTypes.bool
   };
 
   shouldComponentUpdate(nextProps) {
@@ -71,6 +72,7 @@ class CalendarHeader extends Component {
             { fontSize: this.props.fontSize },
             this.props.calendarHeaderStyle
           ]}
+          allowFontScaling={this.props.allowHeaderTextScaling}
         >
           {headerText}
         </Text>
